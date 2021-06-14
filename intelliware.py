@@ -17,9 +17,8 @@ class Intelliware:
                     self.company_interface.get_latest_release_for_hw(vehicle.hw_version)
                 vehicle.update_software(compatible_release)
                 if vehicle.response.result:
-                    if compatible_release.sw_version not in sw_releases.keys():
-                        sw_releases[compatible_release.sw_version] = compatible_release
-                        updated_vehicle_count[compatible_release.sw_version]+=1
+                    sw_releases[compatible_release.sw_version] = compatible_release
+                    updated_vehicle_count[compatible_release.sw_version]+=1
         for sw_release in sw_releases.values():
             self.company_interface.publish_billables(BillInfo(sw_release,
                                                      updated_vehicle_count[sw_release.sw_version]))
@@ -28,8 +27,8 @@ class Intelliware:
         num_updated_vehicles = 0
         for vehicle in self.connected_vehicles:
             if group_id in vehicle.groups or update_all_groups:
-                vehicle.update_software(compatible_release)
+                vehicle.update_software(release)
                 if vehicle.response.result:
                     num_updated_vehicles+=1
-        self.company_interface.publish_billables(release, num_updated_vehicles)
+        self.company_interface.publish_billables(BillInfo(release, num_updated_vehicles))
 
